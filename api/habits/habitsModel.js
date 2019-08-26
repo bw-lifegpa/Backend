@@ -6,7 +6,8 @@ module.exports = {
   add,
   update,
   remove,
-  findById
+  findById,
+  findHabitCategories
 };
 
 function find() {
@@ -14,9 +15,12 @@ function find() {
 }
 
 function findByName(name) {
-  return db('habits')
-    .where({ name })
-    .first();
+  return (
+    db('habits')
+      // .where({ name })
+      .whereRaw(`LOWER(name) LIKE ?`, [`%${name}%`])
+      .first()
+  );
 }
 
 async function add(user) {
@@ -40,8 +44,18 @@ async function remove(id) {
   return del_ ? delUser : null;
 }
 
-function findById(id) {
-  return db('habits')
-    .where({ id })
-    .first();
+async function findById(id) {
+  return {
+    ...(await db('habits')
+      .where({ id })
+      .first()),
+    categories: await findHabitCategories(id)
+  };
+}
+
+async function findHabitCategories(id) {
+  return await db('categories_for_habit as ch')
+    .where('habit_id', id)
+    .join('categories as c', 'ch.category_id', 'c.id')
+    .select('c.id', 'c.name', 'c.description');
 }

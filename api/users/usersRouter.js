@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const Users = require('./usersModel');
+const { checkUserId } = require('./usersMiddleware');
 
 router.get('/', async (req, res) => {
   try {
@@ -12,7 +13,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/id/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -28,7 +29,54 @@ router.get('/id/:id', async (req, res) => {
   }
 });
 
-router.get('/:username', async (req, res) => {
+router.get('/:id/habits', checkUserId, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    res.json(await Users.findUserHabits(id));
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Failed to get user habits' });
+  }
+});
+
+router.post('/:id/habits', checkUserId, async (req, res) => {
+  const { id } = req.params;
+  const { habit_id } = req.body;
+  if (habit_id) {
+    try {
+      res.json(await Users.addHabitToUser(id, habit_id));
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'Failed to add habit to user' });
+    }
+  } else {
+    res
+      .status(400)
+      .json({ message: 'Please send `habit_id` parameter in body' });
+  }
+});
+
+router.delete('/:id/habits', checkUserId, async (req, res) => {
+  const { id } = req.params;
+  const { habit_id } = req.body;
+  if (habit_id) {
+    try {
+      const removed = await Users.removeHabitFromUser(id, habit_id);
+      if (removed) res.status(200).json({ message: 'Habit removed from user' });
+      else res.status(400).json({ message: 'User does not have habit' });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'Failed to remove habit from user' });
+    }
+  } else {
+    res
+      .status(400)
+      .json({ message: 'Please send `habit_id` parameter in body' });
+  }
+});
+
+router.get('/u/:username', async (req, res) => {
   const { username } = req.params;
 
   try {

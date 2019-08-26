@@ -17,7 +17,7 @@ exports.up = function(knex) {
       .inTable('categories')
       .onUpdate('CASCADE')
       .onDelete('CASCADE');
-    tbl.timestamp('added_at').defaultTo(knex.fn.now());
+    tbl.timestamps(true, true);
   });
 };
 

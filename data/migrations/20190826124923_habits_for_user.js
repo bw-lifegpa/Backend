@@ -19,8 +19,7 @@ exports.up = function(knex) {
       .onDelete('CASCADE');
     tbl.integer('weighting').defaultTo(0);
     tbl.string('theme_color');
-    tbl.datetime('created_at').defaultTo(knex.fn.now());
-    tbl.timestamp('updated_at').defaultTo(knex.fn.now());
+    tbl.timestamps(true, true);
   });
 };
 

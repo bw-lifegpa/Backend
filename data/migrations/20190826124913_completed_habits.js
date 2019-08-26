@@ -17,7 +17,7 @@ exports.up = function(knex) {
       .inTable('habits')
       .onUpdate('CASCADE')
       .onDelete('CASCADE');
-    tbl.timestamp('created_at').defaultTo(knex.fn.now());
+    tbl.timestamps(true, true);
     tbl.datetime('completed_at').defaultTo(knex.fn.now());
   });
 };

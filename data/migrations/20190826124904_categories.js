@@ -9,12 +9,12 @@ exports.up = function(knex) {
     tbl
       .integer('created_by')
       .unsigned()
-      .notNullable()
+      // .notNullable()
       .references('id')
       .inTable('users')
       .onUpdate('CASCADE')
       .onDelete('CASCADE');
-    tbl.timestamp('created_at').defaultTo(knex.fn.now());
+    tbl.timestamps(true, true);
   });
 };
 

@@ -8,35 +8,31 @@ const {
   checkUserCreds,
   checkUserExists,
   getJwtToken
-} = require('./middleware');
+} = require('./authMiddleware');
 
-router.post(
-  '/register',
-  checkUserCreds,
-  checkUserExists,
-  async (req, res, next) => {
-    const { username, password } = req.body;
-    try {
-      const digest = bcrypt.hashSync(password, 12);
-      await usersModel
-        .add({
-          username: username,
-          password: digest
-        })
-        .then(
-          newUser =>
-            res.status(201).json({
-              id: newUser.id,
-              username: newUser.username,
-              token: getJwtToken(newUser)
-            })
-          // res.status(201).json(newUser);
-        );
-    } catch (err) {
-      res.status(500).json({ message: 'Could not register user.', error: err });
-    }
+router.post('/register', checkUserCreds, checkUserExists, async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const digest = bcrypt.hashSync(password, 12);
+    await usersModel
+      .add({
+        username: username,
+        password: digest
+      })
+      .then(
+        newUser =>
+          res.status(201).json({
+            id: newUser.id,
+            username: newUser.username,
+            token: getJwtToken(newUser)
+          })
+        // res.status(201).json(newUser);
+      );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Could not register user' });
   }
-);
+});
 
 router.post('/login', checkUserCreds, (req, res, next) => {
   const { username, password } = req.body;
