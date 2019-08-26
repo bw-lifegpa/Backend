@@ -1,4 +1,7 @@
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
+const config = require('../config');
+
 const usersModel = require('../users/usersModel');
 
 async function checkUserCreds(req, res, next) {
