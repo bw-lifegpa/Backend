@@ -44,6 +44,23 @@ router.get('/:id/categories', checkHabitId, async (req, res) => {
   }
 });
 
+router.post('/:id/categories', checkHabitId, async (req, res) => {
+  const { id } = req.params;
+  const { category_id } = req.body;
+  if (category_id) {
+    try {
+      res.json(await Habits.addCategoryToHabit(id, category_id));
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'Failed to add category to habit' });
+    }
+  } else {
+    res
+      .status(400)
+      .json({ message: 'Please send `category_id` parameter in body' });
+  }
+});
+
 router.get('/name/:name', async (req, res) => {
   const { name } = req.params;
 

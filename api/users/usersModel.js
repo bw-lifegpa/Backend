@@ -24,7 +24,7 @@ function findByUsername(username) {
 
 async function add(user) {
   return await db('users')
-    .insert(user)
+    .insert(user, 'id')
     .then(([id]) => findById(id));
 }
 
@@ -75,7 +75,7 @@ async function addHabitToUser(user_id, habit_id) {
     return {
       message: `Habit {id: ${habit_id}} added successfully.`,
       habits: await db('habits_for_user')
-        .insert({ user_id, habit_id })
+        .insert({ user_id, habit_id }, 'id')
         .then(() => findUserHabits(user_id))
     };
 }

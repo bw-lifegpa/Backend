@@ -25,7 +25,7 @@ function findByName(name) {
 
 async function add(category) {
   return await db('categories')
-    .insert(category)
+    .insert(category, 'id')
     .then(([id]) => findById(id));
 }
 
