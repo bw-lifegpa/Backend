@@ -43,7 +43,11 @@ router.post('/login', checkUserCreds, (req, res, next) => {
         // req.session.username = username;
         res
           .status(200)
-          .json({ message: `Welcome ${username}!`, token: getJwtToken(user) });
+          .json({
+            id: user.id,
+            username: user.username,
+            token: getJwtToken(user)
+          });
       } else res.status(401).json({ message: 'Invalid creds' });
     })
     .catch(err => {

@@ -61,7 +61,30 @@ router.post('/:id/categories', checkHabitId, async (req, res) => {
   }
 });
 
-router.get('/name/:name', async (req, res) => {
+router.delete('/:id/categories', checkHabitId, async (req, res) => {
+  const { id } = req.params;
+  const { category_id } = req.body;
+  if (category_id) {
+    try {
+      const removed = await Habits.removeCategoryFromHabit(id, category_id);
+      if (removed)
+        res.status(200).json({
+          message: 'Category removed from habit',
+          categories: await Habits.findHabitCategories(id)
+        });
+      else res.status(400).json({ message: 'Habit does not have category' });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'Failed to remove category from habit' });
+    }
+  } else {
+    res
+      .status(400)
+      .json({ message: 'Please send `category_id` parameter in body' });
+  }
+});
+
+router.get('/h/:name', async (req, res) => {
   const { name } = req.params;
 
   try {

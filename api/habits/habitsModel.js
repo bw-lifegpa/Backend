@@ -8,7 +8,8 @@ module.exports = {
   remove,
   findById,
   findHabitCategories,
-  addCategoryToHabit
+  addCategoryToHabit,
+  removeCategoryFromHabit
 };
 
 function find() {
@@ -70,8 +71,16 @@ async function addCategoryToHabit(habit_id, category_id) {
   else
     return {
       message: `Category {id: ${category_id}} added to habit successfully.`,
-      habits: await db('categories_for_habit')
+      categories: await db('categories_for_habit')
         .insert({ habit_id, category_id }, 'id')
         .then(() => findHabitCategories(habit_id))
     };
+}
+
+async function removeCategoryFromHabit(habit_id, category_id) {
+  const del_ = await db('categories_for_habit')
+    .where({ habit_id })
+    .andWhere({ category_id })
+    .del();
+  return Boolean(del_);
 }

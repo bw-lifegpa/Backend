@@ -46,7 +46,7 @@ router.get('/:id/habits', checkCategoryId, async (req, res) => {
   }
 });
 
-router.get('/name/:name', async (req, res) => {
+router.get('/c/:name', async (req, res) => {
   const { name } = req.params;
 
   try {

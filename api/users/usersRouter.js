@@ -29,6 +29,23 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.put('/:id', checkUserId, async (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  try {
+    const user = await Users.findById(id);
+
+    res.status(201).json({
+      message: 'User successfully updated',
+      user: await Users.update(id, { ...user, ...changes })
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Failed to edit user' });
+  }
+});
+
 router.get('/:id/habits', checkUserId, async (req, res) => {
   const { id } = req.params;
 
@@ -63,7 +80,11 @@ router.delete('/:id/habits', checkUserId, async (req, res) => {
   if (habit_id) {
     try {
       const removed = await Users.removeHabitFromUser(id, habit_id);
-      if (removed) res.status(200).json({ message: 'Habit removed from user' });
+      if (removed)
+        res.status(200).json({
+          message: 'Habit removed from user',
+          habits: await Users.findUserHabits(id)
+        });
       else res.status(400).json({ message: 'User does not have habit' });
     } catch (err) {
       console.log(err);
