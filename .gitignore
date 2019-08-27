@@ -1,7 +1,7 @@
 .DS_Store
 *.swp
-api/config
-data/lifegpa.db3
+# api/config
+# data/lifegpa.db3
 
 # Logs
 logs
