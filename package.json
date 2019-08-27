@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "server": "nodemon index.js",
+    "rollback": "knex migrate:rollback --env production",
     "migrate": "knex migrate:latest --env production",
     "seed": "knex seed:run --env production"
   },
@@ -28,9 +29,11 @@
   "dependencies": {
     "apidoc": "^0.17.7",
     "bcryptjs": "^2.4.3",
+    "connect-session-knex": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
+    "express-session": "^1.16.2",
     "helmet": "^3.20.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.19.2",
