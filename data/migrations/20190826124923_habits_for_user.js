@@ -20,6 +20,8 @@ exports.up = function(knex) {
         .onDelete('CASCADE');
       tbl.integer('weighting').defaultTo(0);
       tbl.string('theme_color');
+      tbl.timestamp('start_date').defaultTo(knex.fn.now());
+      tbl.timestamp('end_date');
       tbl.timestamps(true, true);
     })
     .then();

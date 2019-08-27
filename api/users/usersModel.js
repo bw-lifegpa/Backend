@@ -9,7 +9,9 @@ module.exports = {
   findById,
   findUserHabits,
   addHabitToUser,
-  removeHabitFromUser
+  removeHabitFromUser,
+  getCompletedHabits,
+  markHabitCompleted
 };
 
 function find() {
@@ -60,8 +62,8 @@ async function findUserHabits(id) {
       'h.description',
       'hu.weighting',
       'hu.theme_color',
-      'hu.created_at',
-      'hu.updated_at'
+      'hu.start_date',
+      'hu.end_date'
     );
 }
 
@@ -86,4 +88,47 @@ async function removeHabitFromUser(user_id, habit_id) {
     .andWhere({ habit_id })
     .del();
   return Boolean(del_);
+}
+
+async function getCompletedHabits(user_id, habit_id) {
+  if (!habit_id) habit_id = '%';
+  else {
+    const userHasHabit = await db('habits_for_user')
+      .where('user_id', user_id)
+      .andWhere('habit_id', habit_id);
+    if (!userHasHabit.length)
+      return {
+        message: 'User is not tracking habit.'
+      };
+  }
+  return await db('completed_habits as c')
+    .where('user_id', user_id)
+    .andWhere('habit_id', 'like', habit_id)
+    .join('habits as h', 'c.habit_id', 'h.id')
+    .select('c.habit_id', 'h.name', 'c.completed_at');
+}
+
+async function markHabitCompleted(user_id, habit_id, completed_at) {
+  const userHasHabit = await db('habits_for_user')
+    .where('user_id', user_id)
+    .andWhere('habit_id', habit_id);
+  if (!userHasHabit.length)
+    return {
+      message:
+        'User is not tracking habit. Add habit to user first before marking as complete'
+    };
+  else if (completed_at)
+    return {
+      message: `Habit {id: ${habit_id}} marked complete.`,
+      record: await db('completed_habits')
+        .insert({ user_id, habit_id, completed_at }, 'id')
+        .then(() => getCompletedHabits(user_id, habit_id))
+    };
+  else
+    return {
+      message: `Habit {id: ${habit_id}} marked complete.`,
+      record: await db('completed_habits')
+        .insert({ user_id, habit_id }, 'id')
+        .then(() => getCompletedHabits(user_id, habit_id))
+    };
 }

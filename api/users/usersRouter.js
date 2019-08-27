@@ -74,6 +74,59 @@ router.post('/:id/habits', checkUserId, async (req, res) => {
   }
 });
 
+router.get('/:id/habits/completed', checkUserId, async (req, res) => {
+  const { id } = req.params;
+  const { habit_id } = req.body;
+
+  try {
+    const records = await Users.getCompletedHabits(id, habit_id);
+    console.log(records);
+    if (Array.isArray(records) && records.length === 0)
+      res
+        .status(200)
+        .json({ message: 'User has no record of completed habits' });
+    else res.status(200).json(records);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Failed to get user habits' });
+  }
+});
+
+router.get('/:id/habits/completed/:habit_id', checkUserId, async (req, res) => {
+  const { id } = req.params;
+  const { habit_id } = req.params;
+
+  try {
+    const records = await Users.getCompletedHabits(id, habit_id);
+    if (Array.isArray(records) && records.length === 0)
+      res
+        .status(200)
+        .json({ message: 'User has no record of completed habits' });
+    else res.status(200).json(records);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Failed to get user habits' });
+  }
+});
+
+router.post('/:id/habits/completed', checkUserId, async (req, res) => {
+  const { id } = req.params;
+  const { habit_id, completed_at } = req.body;
+  if (habit_id) {
+    try {
+      res.json(await Users.markHabitCompleted(id, habit_id, completed_at));
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'Failed to add habit to user' });
+    }
+  } else {
+    res.status(400).json({
+      message:
+        'Please send `habit_id` parameter in body. Optionally, also send `completed_at` parameter (will default to now)'
+    });
+  }
+});
+
 router.delete('/:id/habits', checkUserId, async (req, res) => {
   const { id } = req.params;
   const { habit_id } = req.body;
