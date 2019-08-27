@@ -9,7 +9,10 @@
     "server": "nodemon index.js",
     "rollback": "knex migrate:rollback --env production",
     "migrate": "knex migrate:latest --env production",
-    "seed": "knex seed:run --env production"
+    "seed": "knex seed:run --env production",
+    "api-docs": "apidoc -f .js -i ./api -o apidoc/",
+    "build-docs": "apidoc-markdown -p ./apidoc -o README.md",
+    "build-api": "npm-run-all api-docs build-docs"
   },
   "repository": {
     "type": "git",
@@ -29,6 +32,7 @@
   "dependencies": {
     "apidoc": "^0.17.7",
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
     "connect-session-knex": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^8.1.0",
@@ -43,5 +47,16 @@
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
+  },
+  "apidoc": {
+    "name": "LifeGPA",
+    "version": "1.0.0",
+    "description": "API for LifeGjPA Habit Tracker",
+    "title": "LifeGPA API Docs",
+    "url": "https://lifegpa-api.herokuapp.com",
+    "sampleUrl": "https://lifegpa-api.herokuapp.com",
+    "template": {
+      "forceLanguage": "en"
+    }
   }
 }

@@ -15,7 +15,13 @@ module.exports = {
 };
 
 function find() {
-  return db('users');
+  return db('users').select(
+    'id',
+    'username',
+    'first_name',
+    'last_name',
+    'email'
+  );
 }
 
 function findByUsername(username) {
@@ -56,7 +62,7 @@ async function findUserHabits(id) {
     .where('user_id', id)
     .join('habits as h', 'hu.habit_id', 'h.id')
     .select(
-      'hu.id',
+      // 'hu.id',
       'hu.habit_id',
       'h.name',
       'h.description',
@@ -91,7 +97,11 @@ async function removeHabitFromUser(user_id, habit_id) {
 }
 
 async function getCompletedHabits(user_id, habit_id) {
-  if (!habit_id) habit_id = '%';
+  if (!habit_id)
+    return await db('completed_habits as c')
+      .where('user_id', user_id)
+      .join('habits as h', 'c.habit_id', 'h.id')
+      .select('c.habit_id', 'h.name', 'c.completed_at');
   else {
     const userHasHabit = await db('habits_for_user')
       .where('user_id', user_id)
@@ -100,12 +110,12 @@ async function getCompletedHabits(user_id, habit_id) {
       return {
         message: 'User is not tracking habit.'
       };
+    return await db('completed_habits as c')
+      .where('user_id', user_id)
+      .andWhere('habit_id', habit_id)
+      .join('habits as h', 'c.habit_id', 'h.id')
+      .select('c.completed_at');
   }
-  return await db('completed_habits as c')
-    .where('user_id', user_id)
-    .andWhere('habit_id', 'like', habit_id)
-    .join('habits as h', 'c.habit_id', 'h.id')
-    .select('c.habit_id', 'h.name', 'c.completed_at');
 }
 
 async function markHabitCompleted(user_id, habit_id, completed_at) {
