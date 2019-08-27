@@ -42,18 +42,19 @@ module.exports = {
     client: 'pg',
     connection: { filename: './data/testing_projects.db3' },
     migrations: {
-      directory: './database/migrations'
+      directory: './data/migrations'
     }
   },
 
   production: {
     client: 'pg',
     connection: productionDbConnection, // could be an object or a string
+    useNullAsDefault: true,
     migrations: {
-      directory: './database/migrations'
+      directory: './data/migrations'
     },
     seeds: {
-      directory: './database/seeds'
+      directory: './data/seeds'
     }
   }
 };
