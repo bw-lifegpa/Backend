@@ -18,9 +18,9 @@ server.use(cors());
 // server.use(bodyParser.urlencoded({ extended: true }));
 
 server.use('/auth', authRouter);
-server.use('/users', /*restricted,*/ usersRouter);
-server.use('/categories', /*restricted,*/ categoriesRouter);
-server.use('/habits', /*restricted,*/ habitsRouter);
+server.use('/users', restricted, usersRouter);
+server.use('/categories', restricted, categoriesRouter);
+server.use('/habits', restricted, habitsRouter);
 
 // server.use('/', express.static(apiDoc));
 
