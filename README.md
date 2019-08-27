@@ -1,5 +1,7 @@
 # LifeGPA Backend
 
+### BASEURL: https://lifegpa-api.herokuapp.com/
+
 ## Authentication
 
 ### Registering a new user
