@@ -290,11 +290,15 @@ router.get('/:id/habits', checkUserId, async (req, res) => {
  *
  * @apiParam {id} id User ID
  *
- * @apiParam {Number} habit_id
+ * @apiParam {Number} habit_id Habit ID
  *
  * @apiSuccess (200) {String} message Success message
  * @apiSuccess (200) {Object[]} habits Updated list of User's Habits
  *
+ * @apiParamExample {json} Request-Example:
+ *  {
+ *    "habit_id": 6
+ *  }
  *
  * @apiSuccessExample {json} Success-Response:
  *  HTTP/1.1 200 OK
@@ -393,7 +397,84 @@ router.get('/:id/habits/completed', checkUserId, async (req, res) => {
 
   try {
     const records = await Users.getCompletedHabits(id, habit_id);
-    console.log(records);
+    if (Array.isArray(records) && records.length === 0)
+      res
+        .status(200)
+        .json({ message: 'User has no record of completed habits' });
+    else res.status(200).json(records);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Failed to get user habits' });
+  }
+});
+
+/**
+ *
+ * @api {get} /users/:id/habits/count Get count of completed habits
+ * @apiName GetUserCompletedHabitsCount
+ * @apiGroup Users
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {id} id User ID
+ * @apiParam {Number} [habit_id] Habit ID
+ *
+ * @apiSuccess (200) {Object[]} habits Record of User's completed Habits
+ * @apiSuccess (200) {Number} habits.habit_id Habit ID
+ * @apiSuccess (200) {String} habits.name Habit's name
+ * @apiSuccess (200) {String} habits.count Number of times user has completed this habit
+ *
+ * @apiParamExample {json} Request-Example:
+ *  HTTP/1.1 200 OK
+ *  {
+ *    "habit_id": 1
+ *  }
+ *
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *  HTTP/1.1 200 OK
+ *  [
+ *    {
+ *      "habit_id": 1,
+ *      "name": "Yoga for 30 minutes",
+ *      "count": 4
+ *    },
+ *    {
+ *      . . .
+ *    }
+ * ]
+ *
+ * @apiError UserNotFound The User was not found.
+ *
+ * @apiErrorExample {json} User not found
+ *  HTTP/1.1 404
+ *  {
+ *    "message": "Could not find user."
+ *  }
+ *
+ */
+router.get('/:id/habits/completed/count', checkUserId, async (req, res) => {
+  const { id } = req.params;
+  const { habit_id } = req.body;
+
+  try {
+    const records = await Users.getUserHabitCount(id, habit_id);
+    if (Array.isArray(records) && records.length === 0)
+      res
+        .status(200)
+        .json({ message: 'User has no record of completed habits' });
+    else res.status(200).json(records);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Failed to get user habits' });
+  }
+});
+
+router.get('/:id/habits/completed/latest', checkUserId, async (req, res) => {
+  const { id } = req.params;
+  const { habit_id } = req.body;
+
+  try {
+    const records = await Users.getHabitLastCompleted(id, habit_id);
     if (Array.isArray(records) && records.length === 0)
       res
         .status(200)
@@ -460,12 +541,16 @@ router.get('/:id/habits/completed/:habit_id', checkUserId, async (req, res) => {
  *
  * @apiParam {id} id User ID
  * @apiParam {Number} habit_id Habit ID
- * @apiParam {String} [completed_at=now] Timestamp for when habit was completed. Defaults to now. Format YYYY-MM-DD HH:MM:SS
+ * @apiParam {String} [completed_at=now] Timestamp for when habit was completed. Format YYYY-MM-DD HH:MM:SS
  *
  * @apiSuccess (200) {String} message Success message
  * @apiSuccess (200) {Object[]} habits Record of completion for habit
  * @apiSuccess (200) {String} habits.completed_at Timestamp for when habit was completed. Format YYYY-MM-DD HH:MM:SS
  *
+ * @apiParamExample {json} Request-Example:
+ *  {
+ *    "habit_id": 2
+ *  }
  *
  * @apiSuccessExample {json} Success-Response:
  *  HTTP/1.1 200 OK

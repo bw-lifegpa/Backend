@@ -11,7 +11,9 @@ module.exports = {
   addHabitToUser,
   removeHabitFromUser,
   getCompletedHabits,
-  markHabitCompleted
+  markHabitCompleted,
+  getUserHabitCount,
+  getHabitLastCompleted
 };
 
 function find() {
@@ -71,6 +73,60 @@ async function findUserHabits(id) {
       'hu.start_date',
       'hu.end_date'
     );
+}
+
+async function getUserHabitCount(id, habit_id) {
+  if (habit_id) {
+    return await db('completed_habits as c')
+      .where('c.user_id', id)
+      .andWhere('c.habit_id', habit_id)
+      .join('habits as h', 'h.id', 'c.habit_id')
+      .select('h.id as habit_id', 'h.name')
+      .groupBy('h.id')
+      .countDistinct('c.completed_at as count');
+  } else {
+    // return {
+    //   ...(await db('completed_habits as c')
+    //     .where('c.user_id', id)
+    //     .join('habits as h', 'h.id', 'c.habit_id')
+    //     .select('h.id as habit_name', 'h.name')
+    //     .groupBy('h.id')
+    //     .countDistinct('c.completed_at as count')),
+    //   ...(await getHabitLastCompleted(id))
+    // };
+    return await db('completed_habits as c')
+      .where('c.user_id', id)
+      .join('habits as h', 'h.id', 'c.habit_id')
+      .select('h.id as habit_id', 'h.name')
+      .groupBy('h.id')
+      .countDistinct('c.completed_at as count');
+  }
+}
+
+async function getHabitLastCompleted(id, habit_id) {
+  if (habit_id) {
+    return await db('completed_habits')
+      .where('user_id', id)
+      .andWhere('habit_id', habit_id)
+      .orderBy('completed_at', 'desc')
+      .first();
+  } else {
+    console.log(
+      db('completed_habits as c1')
+        // .where('c1.user_id', id)
+        .leftJoin('completed_habits as c2', function() {
+          this.on('c1.habit_id', '=', 'c2.habit_id').on('c1.id', '<', 'c2.id');
+        })
+        .where('c2.id', null)
+        .toString()
+    );
+    return await db('completed_habits as c1')
+      // .where('c1.user_id', id)
+      .leftJoin('completed_habits as c2', function() {
+        this.on('c1.habit_id', '=', 'c2.habit_id').on('c1.id', '<', 'c2.id');
+      })
+      .where('c2.id', null);
+  }
 }
 
 async function addHabitToUser(user_id, habit_id) {

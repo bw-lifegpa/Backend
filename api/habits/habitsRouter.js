@@ -241,7 +241,7 @@ router.get('/:id/categories', checkHabitId, async (req, res) => {
  *
  * @apiParam {id} id Habit ID
  *
- * @apiParam {Number} category_id
+ * @apiParam {Number} category_id Category ID
  *
  * @apiSuccess (200) {String} message Success message
  * @apiSuccess (200) {Object[]} categories Updated list of Habit's categories
@@ -249,6 +249,10 @@ router.get('/:id/categories', checkHabitId, async (req, res) => {
  * @apiSuccess (200) {String} categories.name Name of category
  * @apiSuccess (200) {String} categories.description Description of category
  *
+ * @apiParamExample {json} Request-Example:
+ *  {
+ *    "category_id": 6
+ *  }
  *
  * @apiSuccessExample {json} Success-Response:
  *  HTTP/1.1 200 OK
@@ -392,7 +396,7 @@ router.delete('/:id/categories', checkHabitId, async (req, res) => {
  * @apiSuccess (200) {Number} updated_at Timestamp of when habit was last updated
  * @apiSuccess (200) {Object[]} categories List of habit's categories
  *
- * @apiParamExample {json}
+ * @apiParamExample {json} Request-Example:
  *  {
  *    "name": "Call mom",
  *    "description": "Give her a call tonight",

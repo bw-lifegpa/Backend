@@ -249,10 +249,17 @@ router.get('/:id/habits', checkCategoryId, async (req, res) => {
  * @apiSuccess (200) {Number} categories.id Category ID
  * @apiSuccess (200) {String} categories.name Name of category
  * @apiSuccess (200) {String} categories.description Description of category
+ * @apiSuccess (200) {Number} categories.created_by User ID of category creator
  * @apiSuccess (200) {String} created_at Timestamp of when category was created
  * @apiSuccess (200) {String} updated_at Timestamp of when category was last updated
  * @apiSuccess (200) {Object[]} habits List of associated habits
  *
+ * @apiParamExample {json} Request-Example:
+ *  {
+ *    "name": "Health",
+ *    "description": "Habits for health",
+ *    "created_by": 3
+ *  }
  *
  * @apiSuccessExample {json} Success-Response:
  *  HTTP/1.1 200 OK
@@ -260,6 +267,7 @@ router.get('/:id/habits', checkCategoryId, async (req, res) => {
  *      "id": 2,
  *      "name": "Health",
  *      "description": "Habits for health",
+ *      "created_by": 3
  *      "created_at": "2019-08-27 15:32:55",
  *      "updated_at": "2019-08-30 04:51:31",
  *      "habits": []

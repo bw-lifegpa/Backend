@@ -2,6 +2,10 @@
 
 API for LifeGPA Habit Tracker
 
+- [Auth](#auth)
+	- [Login user](#login-user)
+	- [Register new user](#register-new-user)
+	
 - [Categories](#categories)
 	- [Add new category](#add-new-category)
 	- [Delete category](#delete-category)
@@ -27,6 +31,7 @@ API for LifeGPA Habit Tracker
 	- [Get user by ID](#get-user-by-id)
 	- [Get user by username](#get-user-by-username)
 	- [Get user&#39;s completed habits](#get-user&#39;s-completed-habits)
+	- [Get count of completed habits](#get-count-of-completed-habits)
 	- [Get user habits](#get-user-habits)
 	- [Get user&#39;s completion record for habit](#get-user&#39;s-completion-record-for-habit)
 	- [List all users](#list-all-users)
@@ -36,6 +41,80 @@ API for LifeGPA Habit Tracker
 	
 
 
+# Auth
+
+## Login user
+
+
+
+	POST /auth/login
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| username			| String			|  <p>User username</p>							|
+| password			| String			|  <p>User password</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+ HTTP/1.1 200 OK
+{
+  "id": 6,
+  "username": "lauren",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxhdXJlbjIiLCJpYXQiOjE1NjY5NjQwMTEsImV4cCI6MTU2Njk5MjgxMX0.obJuqN2dWQa5sX6QTNDrQ1o5wUqm4hWjXnhJ8hagiV4"
+}
+```
+### Error Response
+
+Missing required parameters
+
+```
+HTTP/1.1 400
+{
+  "message": "Please send username and password"
+}
+```
+## Register new user
+
+
+
+	POST /auth/register
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| username			| String			|  <p>User username</p>							|
+| password			| String			|  <p>User password</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+ HTTP/1.1 201 Created
+{
+  "id": 6,
+  "username": "lauren",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxhdXJlbjIiLCJpYXQiOjE1NjY5NjQwMTEsImV4cCI6MTU2Njk5MjgxMX0.obJuqN2dWQa5sX6QTNDrQ1o5wUqm4hWjXnhJ8hagiV4"
+}
+```
+### Error Response
+
+Missing required parameters
+
+```
+HTTP/1.1 400
+{
+  "message": "Please send username and password"
+}
+```
 # Categories
 
 ## Add new category
@@ -63,6 +142,7 @@ HTTP/1.1 200 OK
     "id": 2,
     "name": "Health",
     "description": "Habits for health",
+    "created_by": 3
     "created_at": "2019-08-27 15:32:55",
     "updated_at": "2019-08-30 04:51:31",
     "habits": []
@@ -347,7 +427,7 @@ HTTP/1.1 404
 | Name    | Type      | Description                          |
 |---------|-----------|--------------------------------------|
 | id			| id			|  <p>Habit ID</p>							|
-| category_id			| Number			|  							|
+| category_id			| Number			|  <p>Category ID</p>							|
 
 ### Success Response
 
@@ -702,7 +782,7 @@ HTTP/1.1 500 Internal Server Error
 | Name    | Type      | Description                          |
 |---------|-----------|--------------------------------------|
 | id			| id			|  <p>User ID</p>							|
-| habit_id			| Number			|  							|
+| habit_id			| Number			|  <p>Habit ID</p>							|
 
 ### Success Response
 
@@ -908,6 +988,47 @@ HTTP/1.1 404
   "message": "Could not find user."
 }
 ```
+## Get count of completed habits
+
+
+
+	GET /users/:id/habits/count
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>User ID</p>							|
+| habit_id			| Number			| **optional** <p>Habit ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+ HTTP/1.1 200 OK
+ [
+   {
+     "habit_id": 1,
+     "name": "Yoga for 30 minutes",
+     "count": 4
+   },
+   {
+     . . .
+   }
+]
+```
+### Error Response
+
+User not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find user."
+}
+```
 ## Get user habits
 
 
@@ -1037,7 +1158,7 @@ HTTP/1.1 500 Internal Server Error
 |---------|-----------|--------------------------------------|
 | id			| id			|  <p>User ID</p>							|
 | habit_id			| Number			|  <p>Habit ID</p>							|
-| completed_at			| String			| **optional** <p>Timestamp for when habit was completed. Defaults to now. Format YYYY-MM-DD HH:MM:SS</p>							|
+| completed_at			| String			| **optional** <p>Timestamp for when habit was completed. Format YYYY-MM-DD HH:MM:SS</p>							|
 
 ### Success Response
 
