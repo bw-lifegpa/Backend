@@ -1,371 +1,1186 @@
-# LifeGPA Backend
+# LifeGPA v1.0.0
 
-### BASEURL: https://lifegpa-api.herokuapp.com/
+API for LifeGPA Habit Tracker
 
-## Authentication
+- [Categories](#categories)
+	- [Add new category](#add-new-category)
+	- [Delete category](#delete-category)
+	- [Edit category](#edit-category)
+	- [List all categories](#list-all-categories)
+	- [Get category by ID](#get-category-by-id)
+	- [Get category by name](#get-category-by-name)
+	- [Get category&#39;s habits](#get-category&#39;s-habits)
+	
+- [Habits](#habits)
+	- [Add category to habit](#add-category-to-habit)
+	- [Add new habit](#add-new-habit)
+	- [Delete habit](#delete-habit)
+	- [Edit habit](#edit-habit)
+	- [Get habit by ID](#get-habit-by-id)
+	- [Get habit by name](#get-habit-by-name)
+	- [Get habit&#39;s categories](#get-habit&#39;s-categories)
+	- [List all habits](#list-all-habits)
+	
+- [Users](#users)
+	- [Add habit to user](#add-habit-to-user)
+	- [Edit user information](#edit-user-information)
+	- [Get user by ID](#get-user-by-id)
+	- [Get user by username](#get-user-by-username)
+	- [Get user&#39;s completed habits](#get-user&#39;s-completed-habits)
+	- [Get user habits](#get-user-habits)
+	- [Get user&#39;s completion record for habit](#get-user&#39;s-completion-record-for-habit)
+	- [List all users](#list-all-users)
+	- [Mark a habit completed for user&#39;s record](#mark-a-habit-completed-for-user&#39;s-record)
+	- [Remove a category from a habit](#remove-a-category-from-a-habit)
+	- [Remove a habit from a user](#remove-a-habit-from-a-user)
+	
 
-### Registering a new user
 
-```
-POST /auth/register
+# Categories
 
-{
-  "username": "smasher64",  *REQUIRED*
-  "password": "hunter2",    *REQUIRED*
-  "first_name": "George",
-  "last_name": "Pinker",
-  "email": "gpinker@gmail.com"
-}
-```
+## Add new category
 
-#### Success Response
 
-```
-200
 
-{
-  "id": 5,
-  "username": "smasher64",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxhdXJlbiIsImlhdCI6MTU2Njg5MzA0NywiZXhwIjoxNTY2OTIxODQ3fQ.AgK2pmku_n2J2Yg1V3wXT9QqHI21PF4fvNDJp5oGfM8"
-}
-```
+	POST /categories
 
-### Logging in
 
-```
-POST /auth/login
+### Parameters
 
-{
-  "username": "smasher64",  *REQUIRED*
-  "password": "hunter2"     *REQUIRED*
-}
-```
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| name			| String			|  <p>Category name</p>							|
+| description			| String			| **optional** <p>Category description</p>							|
+| created_by			| Number			| **optional** <p>User ID of category creator</p>							|
 
-#### Success Response
+### Success Response
 
-```
-200
-
-{
-  "id": 5,
-  "username": "smasher64",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxhdXJlbiIsImlhdCI6MTU2Njg5MzA0NywiZXhwIjoxNTY2OTIxODQ3fQ.AgK2pmku_n2J2Yg1V3wXT9QqHI21PF4fvNDJp5oGfM8"
-}
-```
-
-## Users
-
-### Getting All Users
-
-```
-GET /users
-```
-
-#### Success Response
-
-Array of User objects
+Success-Response:
 
 ```
-[
+HTTP/1.1 200 OK
   {
-    ...
-  },
-  {
-    ...
-  },
-  ...
-]
-```
-
-### Getting Specific Users
-
-```
-GET /users/:id
-
-or
-
-GET /users/u/:username
-```
-
-#### Success Response
-
-User Object
-
-```
-{
-  ...
-}
-```
-
-### Getting a User's Habits
-
-```
-GET /users/:id/habits
-```
-
-#### Success Response
-
-Array of Habit objects
-
-```
-[
-  {
-    ...
-  },
-  {
-    ...
+    "id": 2,
+    "name": "Health",
+    "description": "Habits for health",
+    "created_at": "2019-08-27 15:32:55",
+    "updated_at": "2019-08-30 04:51:31",
+    "habits": []
   }
-]
 ```
+### Error Response
 
-### Adding a Habit to a User
+Missed required parameters
 
 ```
-POST /users/:id/habits
-
+HTTP/1.1 400
 {
-  habit_id: 1
+  "message": "Missing name parameter"
 }
 ```
+## Delete category
 
-#### Success Response
+
+
+	DELETE /categories/:id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>Category ID</p>							|
+
+### Success Response
+
+Success-Response:
 
 ```
+ HTTP/1.1 200 OK
 {
-  "message": "Habit added successfully.",
+"message": "Category successfully deleted.",
+"deleted_category": {
+  "id": 7,
+  "name": "School",
+  "description": "Habits for academic success",
+  "created_by": 1,
+  "created_at": "2019-08-27 19:15:30",
+  "updated_at": "2019-08-27 19:15:30",
   "habits": [
     {
-      ...
-    },
-    {
-      ...
+      "id": 10,
+      "name": "Study data scructures",
+      "description": "Keep your data structures and algorithm skills sharp"
     }
   ]
 }
 ```
+### Error Response
 
-### Removing a Habit from User
+Category not found
 
 ```
-DELETE /users/:id/habits
-
+HTTP/1.1 404
 {
-  habit_id: 1
+  "message": "Could not find category."
 }
 ```
+## Edit category
 
-#### Success Response
+
+
+	PUT /categories/:id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| Number			|  <p>Category ID</p>							|
+| name			| String			| **optional** <p>Category name</p>							|
+| description			| String			| **optional** <p>Category description</p>							|
+| created_by			| Number			| **optional** <p>User ID of category creator</p>							|
+
+### Success Response
+
+Success-Response:
 
 ```
+HTTP/1.1 200 OK
+  {
+    "id": 2,
+    "name": "Health",
+    "description": "Habits for health",
+    "created_at": "2019-08-27 15:32:55",
+    "updated_at": "2019-08-30 04:51:31",
+    "habits": []
+  }
+```
+### Error Response
+
+Missed required parameters
+
+```
+HTTP/1.1 400
 {
-  "message": "Habit removed successfully.",
+  "message": "Missing required parameters"
+}
+```
+## List all categories
+
+
+
+	GET /categories
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+[
+  {
+    "id": 1,
+    "name": "Health",
+    "description": "For your health!"
+  },
+  {
+    . . .
+  }
+]
+```
+### Error Response
+
+List error
+
+```
+HTTP/1.1 500 Internal Server Error
+```
+## Get category by ID
+
+
+
+	GET /categories/:id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>Category ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "id": 1,
+  "name": "Health",
+  "description": "For your health!",
+  "created_by": 1,
+  "created_at": "2019-08-27 15:32:55",
+  "updated_at": "2019-08-30 04:51:31",
   "habits": [
     {
-      ...
+      "id": 2,
+      "name": "Swim",
+      "description": "Swim some laps"
     },
     {
-      ...
+      . . .
     }
   ]
 }
 ```
+### Error Response
 
-### Editing Users
-
-```
-PUT /users/:id
-```
-
-## Habits
-
-### Getting All Habits
+Category not found
 
 ```
-GET /habits
-```
-
-#### Success Response
-
-Array of Habit objects
-
-```
-[
-  {
-    ...
-  },
-  {
-    ...
-  },
-  ...
-]
-```
-
-### Getting Specific Habits
-
-```
-GET /habits/:id
-
-or
-
-GET /habits/h/:habit_name
-```
-
-#### Success Response
-
-Habit Object
-
-```
+HTTP/1.1 404
 {
-  ...
+  "message": "Could not find category."
 }
 ```
+## Get category by name
 
-### Getting a Habit's Categories
+
+
+	GET /categories/c/:name
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| name			| name			|  <p>Category Name</p>							|
+
+### Success Response
+
+Success-Response:
 
 ```
-GET /habits/:id/categories
+HTTP/1.1 200 OK
+{
+  "id": 1,
+  "name": "Health",
+  "description": "For your health!",
+  "created_by": 1,
+  "created_at": "2019-08-27 15:32:55",
+  "updated_at": "2019-08-30 04:51:31",
+  "habits": [
+    {
+      "id": 2,
+      "name": "Swim",
+      "description": "Swim some laps"
+    },
+    {
+      . . .
+    }
+  ]
+}
 ```
+### Error Response
 
-#### Success Response
-
-Array of Category objects
+Category not found
 
 ```
+HTTP/1.1 404
+{
+  "message": "Could not find category."
+}
+```
+## Get category&#39;s habits
+
+
+
+	GET /categories/:id/habits
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>Habit ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
 [
   {
-    ...
+    "id": 2,
+    "name": "Health",
+    "description": "Habits for health"
   },
   {
-    ...
+    . . .
   }
 ]
 ```
+### Error Response
 
-### Adding a Category to a Habit
+Habit not found
 
 ```
-POST /habits/:id/categories
-
+HTTP/1.1 404
 {
-  category_id: 1
+  "message": "Could not find habit."
 }
 ```
+# Habits
 
-#### Success Response
+## Add category to habit
+
+
+
+	POST /habits/:id/categories
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>Habit ID</p>							|
+| category_id			| Number			|  							|
+
+### Success Response
+
+Success-Response:
 
 ```
+ HTTP/1.1 200 OK
 {
-  "message": "Category added successfully.",
+  "message": "Category {id: 6} added successfully.",
   "categories": [
     {
-      ...
+      "category_id": 1,
+      "name": "Health",
+      "description": "For your health!"
     },
     {
-      ...
+      . . .
     }
   ]
 }
 ```
+### Error Response
 
-### Removing a Category from Habit
+Habit not found
 
 ```
-DELETE /habits/:id/categories
-
+HTTP/1.1 404
 {
-  category_id: 1
+  "message": "Could not find habit."
 }
 ```
-
-#### Success Response
+Category not found
 
 ```
+HTTP/1.1 500
 {
-  "message": "Category removed from habit",
-  "Categories": [
+  "message": "Failed to add category to habit"
+}
+```
+## Add new habit
+
+
+
+	POST /habits
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| name			| String			|  <p>Habit's name</p>							|
+| description			| String			| **optional** <p>Habit's description</p>							|
+| created_by			| String			| **optional** <p>User ID of habit creator</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 201 Created
+{
+  "id": 9,
+  "name": "Call mom",
+  "description": "Give her a call tonight",
+  "created_by": 3,
+  "created_at": "2019-08-27 15:32:55",
+  "updated_at": "2019-08-30 04:51:31",
+  "categories": []
+}
+```
+### Error Response
+
+Missing required parameters
+
+```
+HTTP/1.1 400
+{
+  "message": "Send a name in request body"
+}
+```
+## Delete habit
+
+
+
+	DELETE /habits/:id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>Habit ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "message": "Habit successfully deleted",
+  "deleted_habit": {
+    "id": 1,
+    "name": "Swim laps",
+    "description": "Good for heart health",
+    "created_by": 1,
+    "created_at": "2019-08-27 15:32:55",
+    "updated_at": "2019-08-30 04:51:31",
+    "categories": [
+      {
+        "id": 2,
+        "name": "Health",
+        "description": "Habits for health"
+      },
+      {
+        . . .
+      }
+    ]
+  }
+}
+```
+### Error Response
+
+Habit not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find habit."
+}
+```
+## Edit habit
+
+
+
+	PUT /habits/:id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| Number			|  <p>Habit ID</p>							|
+| name			| String			| **optional** <p>Habit's name</p>							|
+| description			| String			| **optional** <p>Habit's description</p>							|
+| created_by			| String			| **optional** <p>User ID of habit creator</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 201 Created
+{
+  "id": 9,
+  "name": "Call mom",
+  "description": "Give her a call tonight",
+  "created_by": 3,
+  "created_at": "2019-08-27 15:32:55",
+  "updated_at": "2019-08-30 04:51:31",
+  "categories": []
+}
+```
+### Error Response
+
+Habit not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find habit."
+}
+```
+## Get habit by ID
+
+
+
+	GET /habits/:id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>Habit ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "id": 1,
+  "name": "Swim laps",
+  "description": "Good for heart health",
+  "created_by": 1,
+  "created_at": "2019-08-27 15:32:55",
+  "updated_at": "2019-08-30 04:51:31",
+  "categories": [
     {
-      ...
+      "id": 2,
+      "name": "Health",
+      "description": "Habits for health"
     },
     {
-      ...
+      . . .
     }
   ]
 }
 ```
+### Error Response
 
-### Editing and Deleting Habits
-
-```
-PUT/DELETE /habits/:id
-```
-
-## Categories
-
-### Getting All Categories
+Habit not found
 
 ```
-GET /categories
-```
-
-#### Success Response
-
-Array of Category objects
-
-```
-[
-  {
-    ...
-  },
-  {
-    ...
-  },
-  ...
-]
-```
-
-### Getting Specific Categories
-
-```
-GET /categories/:id
-
-or
-
-GET /categories/c/:category_name
-```
-
-#### Success Response
-
-Category Object
-
-```
+HTTP/1.1 404
 {
-  ...
+  "message": "Could not find habit."
 }
 ```
+## Get habit by name
 
-### Getting a Category's Habits
+
+
+	GET /habits/:id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| name			| name			|  <p>Habit Name</p>							|
+
+### Success Response
+
+Success-Response:
 
 ```
-GET /categories/:id/habits
+HTTP/1.1 200 OK
+{
+  "id": 1,
+  "name": "Swim laps",
+  "description": "Good for heart health",
+  "created_by": 1,
+  "created_at": "2019-08-27 15:32:55",
+  "updated_at": "2019-08-30 04:51:31",
+  "categories": [
+    {
+      "id": 2,
+      "name": "Health",
+      "description": "Habits for health"
+    },
+    {
+      . . .
+    }
+  ]
+}
 ```
+### Error Response
 
-#### Success Response
-
-Array of Habit objects
+Habit not found
 
 ```
+HTTP/1.1 404
+{
+  "message": "Could not find habit."
+}
+```
+## Get habit&#39;s categories
+
+
+
+	GET /habits/:id/categories
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>Habit ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
 [
   {
-    ...
+    "id": 2,
+    "name": "Health",
+    "description": "Habits for health"
   },
   {
-    ...
+    . . .
   }
 ]
 ```
+### Error Response
 
-### Editing and Deleting Categories
+Habit not found
 
 ```
-PUT/DELETE /categories/:id
+HTTP/1.1 404
+{
+  "message": "Could not find habit."
+}
 ```
+## List all habits
+
+
+
+	GET /habits
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+[
+  {
+    "id": 1,
+    "name": "Swim laps",
+    "description": "Good for heart health"
+  },
+  {
+    . . .
+  }
+]
+```
+### Error Response
+
+List error
+
+```
+HTTP/1.1 500 Internal Server Error
+```
+# Users
+
+## Add habit to user
+
+
+
+	POST /users/:id/habits
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>User ID</p>							|
+| habit_id			| Number			|  							|
+
+### Success Response
+
+Success-Response:
+
+```
+ HTTP/1.1 200 OK
+{
+  "message": "Habit {id: 6} added successfully.",
+  "habits": [
+    {
+      "habit_id": 1,
+      "name": "Yoga for 30 minutes",
+      "description": "Find inner peace",
+      "weighting": 0,
+      "theme_color": null,
+      "start_date": "2019-08-27 19:15:30",
+      "end_date": "2019-09-05 19:15:30"
+    },
+    {
+      . . .
+    }
+  ]
+}
+```
+### Error Response
+
+User not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find user."
+}
+```
+Habit not found
+
+```
+HTTP/1.1 500
+{
+  "message": "Failed to add habit to user"
+}
+```
+## Edit user information
+
+
+
+	PUT /users/:id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>User ID</p>							|
+| username			| String			| **optional** <p>User's username</p>							|
+| password			| String			| **optional** <p>User's password hash</p>							|
+| first_name			| String			| **optional** <p>User's first name</p>							|
+| last_name			| String			| **optional** <p>User's last name</p>							|
+| email			| String			| **optional** <p>User's email address</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 201 Created
+{
+  "message": "User successfully updated."
+  "user": {
+    "id": 1,
+    "username": "chelsea",
+    "password": "fasdfuafaefnnknfwaunifw",
+    "first_name": "Chelsea",
+    "last_name": "Machen",
+    "email": "chelsea@gmail.com"
+  }
+}
+```
+### Error Response
+
+User not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find user."
+}
+```
+## Get user by ID
+
+
+
+	GET /users/:id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>User ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "id": 1,
+  "username": "chelsea",
+  "password": "fasdfuafaefnnknfwaunifw",
+  "first_name": "Chelsea",
+  "last_name": "Machen",
+  "email": "chelsea@gmail.com"
+}
+```
+### Error Response
+
+User not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find user."
+}
+```
+## Get user by username
+
+
+
+	GET /users/u/:username
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| username			| username			|  <p>User's username</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "id": 1,
+  "username": "chelsea",
+  "password": "fasdfuafaefnnknfwaunifw",
+  "first_name": "Chelsea",
+  "last_name": "Machen",
+  "email": "chelsea@gmail.com"
+}
+```
+### Error Response
+
+User not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find user."
+}
+```
+## Get user&#39;s completed habits
+
+
+
+	GET /users/:id/habits/completed
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>User ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+ HTTP/1.1 200 OK
+ [
+   {
+     "habit_id": 1,
+     "name": "Yoga for 30 minutes",
+     "completed_at": "2019-09-05 19:15:30"
+   },
+   {
+     . . .
+   }
+]
+```
+### Error Response
+
+User not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find user."
+}
+```
+## Get user habits
+
+
+
+	GET /users/:id/habits
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>User ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+ HTTP/1.1 200 OK
+ [
+   {
+     "habit_id": 1,
+     "name": "Yoga for 30 minutes",
+     "description": "Find inner peace",
+     "weighting": 0,
+     "theme_color": null,
+     "start_date": "2019-08-27 19:15:30",
+     "end_date": "2019-09-05 19:15:30"
+   },
+   {
+     . . .
+   }
+]
+```
+### Error Response
+
+User not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find user."
+}
+```
+## Get user&#39;s completion record for habit
+
+
+
+	GET /users/:id/habits/completed/:habit_id
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>User ID</p>							|
+| habit_id			| habit_id			|  <p>Habit ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+ HTTP/1.1 200 OK
+ [
+   {
+     "completed_at": "2019-09-05 19:15:30"
+   },
+   {
+     . . .
+   }
+]
+```
+### Error Response
+
+User not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find user."
+}
+```
+## List all users
+
+
+
+	GET /users
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+[
+  {
+    "id": 1,
+    "username": "chelsea",
+    "first_name": "Chelsea",
+    "last_name": "Machen",
+    "email": "chelsea@gmail.com"
+  },
+  {
+    . . .
+  }
+]
+```
+### Error Response
+
+List error
+
+```
+HTTP/1.1 500 Internal Server Error
+```
+## Mark a habit completed for user&#39;s record
+
+
+
+	POST /users/:id/habits/completed
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>User ID</p>							|
+| habit_id			| Number			|  <p>Habit ID</p>							|
+| completed_at			| String			| **optional** <p>Timestamp for when habit was completed. Defaults to now. Format YYYY-MM-DD HH:MM:SS</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "message": "Habit {id: 2} marked complete.",
+  "record": [
+    {
+      "completed_at": "2019-09-05 19:15:30"
+    },
+    {
+      . . .
+    }
+  ]
+}
+```
+### Error Response
+
+User not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find user."
+}
+```
+User not found
+
+```
+HTTP/1.1 400
+{
+  "message": "User is not tracking habit. Add habit to user first before marking as complete"
+}
+```
+## Remove a category from a habit
+
+
+
+	DELETE /habits/:id/categories/
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>Habit ID</p>							|
+| category_id			| Number			|  <p>Category ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+ HTTP/1.1 200 OK
+{
+  "message": "Category {id: 6} removed successfully.",
+  "categories": [
+    {
+      "category_id": 1,
+      "name": "Health",
+      "description": "For your health!"
+    },
+    {
+      . . .
+    }
+  ]
+}
+```
+### Error Response
+
+Habit not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find habit."
+}
+```
+Category not found
+
+```
+HTTP/1.1 500
+{
+  "message": "Failed to remove category from habit"
+}
+```
+## Remove a habit from a user
+
+
+
+	DELETE /users/:id/habits/
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>User ID</p>							|
+| habit_id			| Number			|  <p>Habit ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+ HTTP/1.1 200 OK
+{
+  "message": "Habit {id: 4} removed from user.",
+  "habits": [
+    {
+      "habit_id": 1,
+      "name": "Yoga for 30 minutes",
+      "description": "Find inner peace",
+      "weighting": 0,
+      "theme_color": null,
+      "start_date": "2019-08-27 19:15:30",
+      "end_date": "2019-09-05 19:15:30"
+    },
+    {
+      . . .
+    }
+  ]
+}
+```
+### Error Response
+
+User not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find user."
+}
+```
+User not found
+
+```
+HTTP/1.1 400
+{
+  "message": "User is not tracking habit. Add habit to user first before marking as complete"
+}
+```
+

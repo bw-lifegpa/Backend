@@ -11,7 +11,7 @@ module.exports = {
 };
 
 function find() {
-  return db('categories');
+  return db('categories').select('id', 'name', 'description');
 }
 
 function findByName(name) {
