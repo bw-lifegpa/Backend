@@ -32,6 +32,7 @@ API for LifeGPA Habit Tracker
 	- [Get user by username](#get-user-by-username)
 	- [Get user&#39;s completed habits](#get-user&#39;s-completed-habits)
 	- [Get count of completed habits](#get-count-of-completed-habits)
+	- [Get latest habit completions](#get-latest-habit-completions)
 	- [Get user habits](#get-user-habits)
 	- [Get user&#39;s completion record for habit](#get-user&#39;s-completion-record-for-habit)
 	- [List all users](#list-all-users)
@@ -992,7 +993,7 @@ HTTP/1.1 404
 
 
 
-	GET /users/:id/habits/count
+	GET /users/:id/habits/completed/count
 
 
 ### Parameters
@@ -1013,6 +1014,46 @@ Success-Response:
      "habit_id": 1,
      "name": "Yoga for 30 minutes",
      "count": 4
+   },
+   {
+     . . .
+   }
+]
+```
+### Error Response
+
+User not found
+
+```
+HTTP/1.1 404
+{
+  "message": "Could not find user."
+}
+```
+## Get latest habit completions
+
+
+
+	GET /users/:id/habits/completed/latest
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| id			| id			|  <p>User ID</p>							|
+| habit_id			| Number			| **optional** <p>Habit ID</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+ HTTP/1.1 200 OK
+ [
+   {
+     "habit_id": 1,
+     "last_completed": "2019-08-28 21:16:58"
    },
    {
      . . .

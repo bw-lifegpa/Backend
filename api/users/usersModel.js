@@ -1,4 +1,5 @@
 const db = require('../../data/dbConfig');
+const knex = require('knex');
 
 module.exports = {
   find,
@@ -85,15 +86,6 @@ async function getUserHabitCount(id, habit_id) {
       .groupBy('h.id')
       .countDistinct('c.completed_at as count');
   } else {
-    // return {
-    //   ...(await db('completed_habits as c')
-    //     .where('c.user_id', id)
-    //     .join('habits as h', 'h.id', 'c.habit_id')
-    //     .select('h.id as habit_name', 'h.name')
-    //     .groupBy('h.id')
-    //     .countDistinct('c.completed_at as count')),
-    //   ...(await getHabitLastCompleted(id))
-    // };
     return await db('completed_habits as c')
       .where('c.user_id', id)
       .join('habits as h', 'h.id', 'c.habit_id')
@@ -109,23 +101,13 @@ async function getHabitLastCompleted(id, habit_id) {
       .where('user_id', id)
       .andWhere('habit_id', habit_id)
       .orderBy('completed_at', 'desc')
-      .first();
+      .first()
+      .select('habit_id', 'completed_at as last_completed');
   } else {
-    console.log(
-      db('completed_habits as c1')
-        // .where('c1.user_id', id)
-        .leftJoin('completed_habits as c2', function() {
-          this.on('c1.habit_id', '=', 'c2.habit_id').on('c1.id', '<', 'c2.id');
-        })
-        .where('c2.id', null)
-        .toString()
-    );
-    return await db('completed_habits as c1')
-      // .where('c1.user_id', id)
-      .leftJoin('completed_habits as c2', function() {
-        this.on('c1.habit_id', '=', 'c2.habit_id').on('c1.id', '<', 'c2.id');
-      })
-      .where('c2.id', null);
+    const habits = db('completed_habits')
+      .where('user_id', id)
+      .distinct('habit_id');
+    return habits.map(habit => getHabitLastCompleted(id, habit.habit_id));
   }
 }
 

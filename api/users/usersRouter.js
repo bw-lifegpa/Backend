@@ -469,6 +469,48 @@ router.get('/:id/habits/completed/count', checkUserId, async (req, res) => {
   }
 });
 
+/**
+ *
+ * @api {get} /users/:id/habits/completed/latest Get latest habit completions
+ * @apiName GetUserCompletedHabitsLatest
+ * @apiGroup Users
+ * @apiVersion 1.0.0
+ *
+ * @apiParam {id} id User ID
+ * @apiParam {Number} [habit_id] Habit ID
+ *
+ * @apiSuccess (200) {Object[]} habits Record of User's completed Habits
+ * @apiSuccess (200) {Number} habits.habit_id Habit ID
+ * @apiSuccess (200) {String} habits.last_completed Timestamp of latest date habit was completed
+ *
+ * @apiParamExample {json} Request-Example:
+ *  HTTP/1.1 200 OK
+ *  {
+ *    "habit_id": 1
+ *  }
+ *
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *  HTTP/1.1 200 OK
+ *  [
+ *    {
+ *      "habit_id": 1,
+ *      "last_completed": "2019-08-28 21:16:58"
+ *    },
+ *    {
+ *      . . .
+ *    }
+ * ]
+ *
+ * @apiError UserNotFound The User was not found.
+ *
+ * @apiErrorExample {json} User not found
+ *  HTTP/1.1 404
+ *  {
+ *    "message": "Could not find user."
+ *  }
+ *
+ */
 router.get('/:id/habits/completed/latest', checkUserId, async (req, res) => {
   const { id } = req.params;
   const { habit_id } = req.body;
