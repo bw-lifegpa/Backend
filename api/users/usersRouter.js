@@ -57,14 +57,14 @@ router.get('/', async (req, res) => {
  *
  * @apiParam {id} id User ID
  *
- * @apiSuccess (200) {Number} users.id User ID
- * @apiSuccess (200) {String} users.username User's username
- * @apiSuccess (200) {String} users.password User's password hash
- * @apiSuccess (200) {String} users.first_name User's first name
- * @apiSuccess (200) {String} users.last_name User's last name
- * @apiSuccess (200) {String} users.email User's email address
- * @apiSuccess (200) {String} users.created_at Timestamp when user was created
- * @apiSuccess (200) {String} users.updated_at Timestamp when user was last updated
+ * @apiSuccess (200) {Number} id User ID
+ * @apiSuccess (200) {String} username User's username
+ * @apiSuccess (200) {String} password User's password hash
+ * @apiSuccess (200) {String} first_name User's first name
+ * @apiSuccess (200) {String} last_name User's last name
+ * @apiSuccess (200) {String} email User's email address
+ * @apiSuccess (200) {String} created_at Timestamp when user was created
+ * @apiSuccess (200) {String} updated_at Timestamp when user was last updated
  *
  *
  * @apiSuccessExample {json} Success-Response:
