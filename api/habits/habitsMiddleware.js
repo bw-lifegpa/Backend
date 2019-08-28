@@ -1,11 +1,8 @@
 const Habits = require('./habitsModel');
 
 async function checkValidHabit(req, res, next) {
-  const { name, description } = req.body;
-  if (!name || !description)
-    res
-      .status(400)
-      .json({ message: 'Send a name and description in request body' });
+  const { name } = req.body;
+  if (!name) res.status(400).json({ message: 'Send a name in request body' });
   else next();
 }
 
