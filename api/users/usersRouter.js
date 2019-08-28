@@ -410,7 +410,7 @@ router.get('/:id/habits/completed', checkUserId, async (req, res) => {
 
 /**
  *
- * @api {get} /users/:id/habits/count Get count of completed habits
+ * @api {get} /users/:id/habits/completed/count Get count of completed habits
  * @apiName GetUserCompletedHabitsCount
  * @apiGroup Users
  * @apiVersion 1.0.0
