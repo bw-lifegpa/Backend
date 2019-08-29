@@ -19,6 +19,9 @@ const {
  *
  * @apiParam {String} username User username
  * @apiParam {String} password User password
+ * @apiParam {String} [email] User's email address
+ * @apiParam {String} [first_name] User's first name
+ * @apiParam {String} [last_name] User's last name
  *
  * @apiSuccess {Number} id User ID
  * @apiSuccess {String} username User's username
@@ -27,7 +30,10 @@ const {
  * @apiParamExample {json}
  *  {
  *    "username": "lauren",
- *    "password": "hunter2"
+ *    "password": "hunter2",
+ *    "email": "lauren@gmail.com",
+ *    "first_name": "Lauren",
+ *    "last_name": "Epstein"
  *  }
  *
  * @apiSuccessExample {json} Success-Response:
@@ -35,6 +41,9 @@ const {
  * {
  *   "id": 6,
  *   "username": "lauren",
+ *   "email": "lauren@gmail.com",
+ *   "first_name": "Lauren",
+ *   "last_name": "Epstein",
  *   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxhdXJlbjIiLCJpYXQiOjE1NjY5NjQwMTEsImV4cCI6MTU2Njk5MjgxMX0.obJuqN2dWQa5sX6QTNDrQ1o5wUqm4hWjXnhJ8hagiV4"
  * }
  *
@@ -48,19 +57,25 @@ const {
  *
  */
 router.post('/register', checkUserCreds, checkUserExists, async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, email, first_name, last_name } = req.body;
   try {
     const digest = bcrypt.hashSync(password, 12);
     await usersModel
       .add({
         username: username,
-        password: digest
+        password: digest,
+        email: email || null,
+        first_name: first_name || null,
+        last_name: last_name || null
       })
       .then(
         newUser =>
           res.status(201).json({
             id: newUser.id,
             username: newUser.username,
+            email: newUser.email || null,
+            first_name: newUser.first_name || null,
+            last_name: newUser.last_name || null,
             token: getJwtToken(newUser)
           })
         // res.status(201).json(newUser);

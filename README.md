@@ -93,6 +93,9 @@ HTTP/1.1 400
 |---------|-----------|--------------------------------------|
 | username			| String			|  <p>User username</p>							|
 | password			| String			|  <p>User password</p>							|
+| email			| String			| **optional** <p>User's email address</p>							|
+| first_name			| String			| **optional** <p>User's first name</p>							|
+| last_name			| String			| **optional** <p>User's last name</p>							|
 
 ### Success Response
 
@@ -103,6 +106,9 @@ Success-Response:
 {
   "id": 6,
   "username": "lauren",
+  "email": "lauren@gmail.com",
+  "first_name": "Lauren",
+  "last_name": "Epstein",
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxhdXJlbjIiLCJpYXQiOjE1NjY5NjQwMTEsImV4cCI6MTU2Njk5MjgxMX0.obJuqN2dWQa5sX6QTNDrQ1o5wUqm4hWjXnhJ8hagiV4"
 }
 ```
