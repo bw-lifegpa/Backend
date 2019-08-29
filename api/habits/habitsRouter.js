@@ -402,7 +402,7 @@ router.delete('/:id/categories', checkHabitId, async (req, res) => {
  *  {
  *    "name": "Call mom",
  *    "description": "Give her a call tonight",
- *    "user_by": 3
+ *    "user_id": 3
  *  }
  *
  * @apiSuccessExample {json} Success-Response:
