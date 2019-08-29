@@ -8,6 +8,8 @@ const {
   checkHabitId
 } = require('./habitsMiddleware');
 
+const Users = require('../users/usersModel');
+
 /**
  *
  * @api {get} /habits List all habits
@@ -386,7 +388,7 @@ router.delete('/:id/categories', checkHabitId, async (req, res) => {
  *
  * @apiParam {String} name Habit's name
  * @apiParam {String} [description] Habit's description
- * @apiParam {String} [created_by] User ID of habit creator
+ * @apiParam {String} [user_id] User ID of habit creator
  *
  * @apiSuccess (200) {Number} id Habit ID
  * @apiSuccess (200) {String} name Habit's name
@@ -400,7 +402,7 @@ router.delete('/:id/categories', checkHabitId, async (req, res) => {
  *  {
  *    "name": "Call mom",
  *    "description": "Give her a call tonight",
- *    "created_by": 3
+ *    "user_by": 3
  *  }
  *
  * @apiSuccessExample {json} Success-Response:
@@ -425,10 +427,19 @@ router.delete('/:id/categories', checkHabitId, async (req, res) => {
  *
  */
 router.post('/', checkValidHabit, checkHabitExists, async (req, res, next) => {
+  const { name, description, user_id } = req.body;
   try {
-    await Habits.add({ ...req.body }).then(newHabit =>
-      res.status(201).json(newHabit)
-    );
+    await Habits.add({
+      name: name,
+      description: description || null,
+      created_by: user_id || null
+    }).then(newHabit => {
+      if (req.body.user_id) {
+        Users.addHabitToUser(user_id, newHabit.id).then(added => {
+          res.status(201).json(newHabit);
+        });
+      } else res.status(201).json(newHabit);
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Error adding habit' });

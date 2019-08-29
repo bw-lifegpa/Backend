@@ -481,7 +481,7 @@ HTTP/1.1 500
 |---------|-----------|--------------------------------------|
 | name			| String			|  <p>Habit's name</p>							|
 | description			| String			| **optional** <p>Habit's description</p>							|
-| created_by			| String			| **optional** <p>User ID of habit creator</p>							|
+| user_id			| String			| **optional** <p>User ID of habit creator</p>							|
 
 ### Success Response
 
