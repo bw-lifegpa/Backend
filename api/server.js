@@ -15,6 +15,7 @@ const server = express();
 
 server.use(helmet());
 server.use(express.json());
+server.options('*', cors());
 server.use(cors());
 server.use(bodyParser.urlencoded({ extended: true }));
 
